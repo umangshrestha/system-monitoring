@@ -6,8 +6,6 @@ import (
 	"testing"
 )
 
-
-
 func TestGetHz(t* testing.T) {
 	//$ getconf CLK_TCK
 	//100

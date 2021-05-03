@@ -12,7 +12,6 @@ static unsigned int gethz(void)
 */
 import "C"
 
-
 func GetHz() uint{
         // There is no easy way to get 
         // kernels clock ticks per second
@@ -20,4 +19,3 @@ func GetHz() uint{
         hz := C.gethz()
         return uint(hz)
 }
-

@@ -6,7 +6,6 @@ import (
 	"testing"
 )
 
-
 func TestGetUptime(t* testing.T) {
 	//$ tuptime -sc | grep 'Current uptime' | awk -F\" '{print $4}'
 	//1619938259

@@ -5,7 +5,6 @@ import (
 	"testing"
 )
 
-
 func TestGetHostName(t* testing.T) {
 	//$ hostname
 	//shrestha
@@ -15,5 +14,4 @@ func TestGetHostName(t* testing.T) {
 	if expected != output {
 		t.Errorf("expected: %s, recieved: %s", expected, output)
 	}
-
 }

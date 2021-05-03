@@ -7,6 +7,8 @@ import (
 )
 
 func GetHostName() string{
+	//$ cat /etc/hostname 
+	//shrestha
 	const FileName = "/etc/hostname"
 	file, err := os.Open(FileName)
 	if err != nil {
