@@ -1,4 +1,4 @@
-package linux
+# package linux
 
 type Bytes struct {
 	Tx uint64
@@ -16,15 +16,15 @@ type MemKB struct {
 	Cache uint64
 }
 
+# functions
+func GetCurrentCpu(r chan float64); <br />
+func GetProcs()  int; <br />
+func GetHz()  uint; <br />
+func GetHostName() string; <br />
+func GetInterfaceNames() []string; <br /> 
+func GetUptime() float64; <br />
+func GetBytes(interfaceName string) Bytes; <br />
+func GetMem() MemKB; <br />
 
-func GetCurrentCpu(r chan float64);
-func GetProcs()  int;
-func GetHz()  uint;
-func GetHostName() string;
-func GetInterfaceNames() []string; 
-func GetUptime() float64;
-func GetBytes(interfaceName string) Bytes;
-func GetMem() MemKB
-
-The output csv of example.go is
+The output csv of example.go:
 //epoch, cpu, mUsed, sUsed, cache, uptimeInMin
