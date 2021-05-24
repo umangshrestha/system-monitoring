@@ -1,20 +1,18 @@
-package linux
+package main
 
 import (
 	"fmt"
 	"sort"
 	"strconv"
 	"strings"
-	"system-monitoring/utils"
 	"testing"
 )
 
-
-func TestGetInterfaceNames(t* testing.T) {
+func TestGetInterfaceNames(t *testing.T) {
 	//$ ifconfig |grep -oE "^[a-z0-9]+"|xargs
 	//docker0 enp6s0f1 lo wlp0s20f3
-	const Command  = "ifconfig |grep -oE \"^[a-z0-9]+\"|xargs"
-	data := utils.RunSubprocess(Command)
+	const Command = "ifconfig |grep -oE \"^[a-z0-9]+\"|xargs"
+	data := RunSubprocess(Command)
 	expected := strings.Split(data, " ")
 	o := GetInterfaceNames()
 	// the interface names are not sorted. So for testing we need to sort them first.
@@ -26,8 +24,7 @@ func TestGetInterfaceNames(t* testing.T) {
 	}
 }
 
-
-func TestGetBytes(t* testing.T) {
+func TestGetBytes(t *testing.T) {
 	for _, interfaceName := range GetInterfaceNames() {
 		const (
 			Rx = 0
@@ -37,13 +34,13 @@ func TestGetBytes(t* testing.T) {
 		//$ ifconfig wlp0s20f3|awk '/packets/ {print $5}'|xargs
 		//20299 17045
 		// RX    TX
-		data := utils.RunSubprocess(Command)
+		data := RunSubprocess(Command)
 		arr := strings.Split(data, " ")
-		var expected [] uint64
+		var expected []uint64
 		for _, data := range arr {
 			d, _ := strconv.ParseUint(data, 10, 64)
 			expected = append(expected, d)
-		} 
+		}
 		output := GetBytes(interfaceName)
 		if expected[Rx] != output.Rx {
 			t.Errorf("expected: %d, recieved: %d", expected[Rx], output.Rx)
@@ -54,4 +51,3 @@ func TestGetBytes(t* testing.T) {
 		}
 	}
 }
-	

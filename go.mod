@@ -1,3 +1,3 @@
-module github.com/umangshrestha/system-monitoring
+module example.com/system-monitoring
 
 go 1.16

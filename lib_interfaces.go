@@ -1,4 +1,4 @@
-package linux
+package main
 
 import (
 	"bufio"
@@ -28,7 +28,7 @@ func GetInterfaceNames() []string {
 }
 
 func readStatistics(interfaceName string, tx string) uint64 {
-	//$ cat /sys/class/net/wlp0s20f3/statistics/tx_bytes 
+	//$ cat /sys/class/net/wlp0s20f3/statistics/tx_bytes
 	//470798533
 	fileName := fmt.Sprintf("/sys/class/net/%s/statistics/%s_bytes", interfaceName, tx)
 	file, err := os.Open(fileName)

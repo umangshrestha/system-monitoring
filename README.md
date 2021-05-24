@@ -1,4 +1,4 @@
-# package linux
+# package main
 
 type Bytes struct {
 	Tx uint64

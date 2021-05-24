@@ -1,31 +1,30 @@
-package linux
+package main
 
 import (
 	"strconv"
 	"strings"
-	"system-monitoring/utils"
 	"testing"
 )
 
-func TestGetMem(t* testing.T) {
+func TestGetMem(t *testing.T) {
 	const (
-		MemTotal  =  0 
-		MemUsed   =  1
-		MemFree   =  2
-		Shared    =  3
-		Cache     =  4
-		SwapTotal =  5
-		SwapUsed  =  6
-		SwapFree  =  7
+		MemTotal  = 0
+		MemUsed   = 1
+		MemFree   = 2
+		Shared    = 3
+		Cache     = 4
+		SwapTotal = 5
+		SwapUsed  = 6
+		SwapFree  = 7
 	)
 	Command := "free -k"
-		//$ ifconfig wlp0s20f3|awk '/packets/ {print $5}'|xargs
-		//20299 17045
-		// RX    TX
-	data := utils.RunSubprocess(Command)
+	//$ ifconfig wlp0s20f3|awk '/packets/ {print $5}'|xargs
+	//20299 17045
+	// RX    TX
+	data := RunSubprocess(Command)
 	arr := strings.Split(data, " ")
-	var expected []uint64;
-	for _, d := range arr{
+	var expected []uint64
+	for _, d := range arr {
 		if data, err := strconv.ParseUint(d, 10, 64); err == nil {
 			expected = append(expected, data)
 		}
@@ -43,7 +42,7 @@ func TestGetMem(t* testing.T) {
 	if expected[MemFree] != output.MemFree {
 		t.Errorf("MemFree: expected: %d, recieved: %d", expected[MemFree], output.MemFree)
 	}
-	
+
 	if expected[SwapTotal] != output.SwapTotal {
 		t.Errorf("SwapTotal: expected: %d, recieved: %d", expected[SwapTotal], output.SwapTotal)
 	}
@@ -64,4 +63,3 @@ func TestGetMem(t* testing.T) {
 		t.Errorf("Cache: expected: %d, recieved: %d", expected[Cache], output.Cache)
 	}
 }
-	

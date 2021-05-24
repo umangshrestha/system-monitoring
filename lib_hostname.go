@@ -1,4 +1,4 @@
-package linux
+package main
 
 import (
 	"bufio"
@@ -6,8 +6,8 @@ import (
 	"os"
 )
 
-func GetHostName() string{
-	//$ cat /etc/hostname 
+func GetHostName() string {
+	//$ cat /etc/hostname
 	//shrestha
 	const FileName = "/etc/hostname"
 	file, err := os.Open(FileName)

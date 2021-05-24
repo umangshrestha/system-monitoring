@@ -1,4 +1,4 @@
-package utils
+package main
 
 import (
 	"log"
@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-func RunSubprocess(cmd string) string{
+func RunSubprocess(cmd string) string {
 	// bash -c should be passed for shell commands
 	out, err := exec.Command("bash", "-c", cmd).Output()
 	if err != nil {
@@ -18,6 +18,6 @@ func RunSubprocess(cmd string) string{
 
 	// remove \n from the end of the line if present
 	data = strings.TrimSuffix(data, "\n")
-	
+
 	return data
 }

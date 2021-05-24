@@ -1,4 +1,4 @@
-package linux
+package main
 
 import (
 	"bufio"
@@ -10,11 +10,11 @@ import (
 
 func GetUptime() float64 {
 	/*
-	$cat /proc/uptime
-	>>34903.79  224873.38
-	[0] uptime is the duration in seconds that system has run
-	[1] idletime is the duraiton in seconds when processor was not being used by any program
-	[return] uptime
+		$cat /proc/uptime
+		>>34903.79  224873.38
+		[0] uptime is the duration in seconds that system has run
+		[1] idletime is the duraiton in seconds when processor was not being used by any program
+		[return] uptime
 	*/
 	const FileName = "/proc/uptime"
 	file, err := os.Open(FileName)
