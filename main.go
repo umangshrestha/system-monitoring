@@ -39,6 +39,7 @@ func monitorSystem(fileName string) {
 }
 
 func main() {
+	GetProcs()
 	//Create folder if not exists
 	getCurrentDate := func() string {
 		dt := time.Now()

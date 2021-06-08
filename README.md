@@ -25,6 +25,9 @@ func GetInterfaceNames() []string; <br />
 func GetUptime() float64; <br />
 func GetBytes(interfaceName string) Bytes; <br />
 func GetMem() MemKB; <br />
-
+func GetPidCpu(pid string) float64 </br>
+func GetPidofProcess() map[string][]string </br>
+func GetPidMem(pid string) uint64 </br>
+func GetPidCpu(pid string) float64 </br>
 The output csv of example.go:
 //epoch, cpu, mUsed, sUsed, cache, uptimeInMin

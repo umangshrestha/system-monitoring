@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"log"
 	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
@@ -94,4 +95,69 @@ func calulateCpu(last, current Cpu) float64 {
 	delTot := current.totTime - last.totTime
 	cpuUsage := (1.0 - float64(delIdle)/float64(delTot)) * 100.0
 	return cpuUsage
+}
+
+/*
+/proc/uptime
+
+  #1 uptime of the system (seconds)
+    /proc/[PID]/stat
+
+ $cat /proc/225/stat
+ 225 (scsi_tmf_4) I 2 0 0 0 -1 69238880 0 0 0 0 0 0 0 0 0 -20 1 0 119 0 0 18446744073709551615 0 0 0 0 0 0 0 2147483647 0 0 0 0 17 1 0 0 0 0 0 0 0 0 0 0 0 0 0
+
+#14 utime - CPU time spent in user code, measured in clock ticks
+
+  #15 stime - CPU time spent in kernel code, measured in clock ticks
+
+  #16 cutime - Waited-for children's CPU time spent in user code (in clock ticks)
+
+  #17 cstime - Waited-for children's CPU time spent in kernel code (in clock ticks)
+
+  #22 starttime - Time when the process started, measured in clock ticks
+
++    Hertz (number of clock ticks per second) of your system.
+
+  In most cases, getconf CLK_TCK can be used to return the number of clock ticks.
+
+  The sysconf(_SC_CLK_TCK) C function call may also be used to return the hertz value.
+
+Calculation
+	First we determine the total time spent for the process:
+	total_time = utime + stime
+	We also have to decide whether we want to include the time from children processes. If we do, then we add those values to total_time:
+	total_time = total_time + cutime + cstime
+	Next we get the total elapsed time in seconds since the process started:
+	seconds = uptime - (starttime / Hertz)
+	Finally we calculate the CPU usage percentage:
+	cpu_usage = 100 * ((total_time / Hertz) / seconds)
+*/
+func GetPidCpu(pid string) float64 {
+
+	file, err := os.Open(filepath.Join("/proc/", pid, "stat"))
+
+	if err != nil {
+
+		log.Fatal(err)
+
+	}
+
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+	scanner.Scan()
+	line := scanner.Text()
+	fields := strings.Fields(line)
+	uTime, _ := strconv.ParseUint(fields[14], 10, 64)
+	sTime, _ := strconv.ParseUint(fields[15], 10, 64)
+	cuTime, _ := strconv.ParseUint(fields[16], 10, 64)
+	csTime, _ := strconv.ParseUint(fields[17], 10, 64)
+	startTime, _ := strconv.ParseUint(fields[14], 10, 64)
+	totalTime := uTime + sTime + cuTime + csTime
+	hz := GetHz()
+	upTime := GetUptime()
+	seconds := upTime - float64(startTime/uint64(hz))
+	cpu := 100.0 * float64((totalTime / uint64(hz))) / seconds
+	return cpu
+
 }

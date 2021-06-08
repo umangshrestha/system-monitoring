@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"log"
 	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 )
@@ -97,4 +98,52 @@ func GetMem() MemKB {
 		//lib_memory_test.go:64: Cache: expected: 2865608, recieved: 2675428
 		Cache: buffer + cached + slab + sReclamaible,
 	}
+}
+
+/*
+int get_memory_usage(pid_t pid) {
+  int fd, data, stack;
+  char buf[4096], status_child[NAME_MAX];
+  char *vm;
+  sprintf(status_child, "/proc/%d/status", pid);
+  if ((fd = open(status_child, O_RDONLY)) < 0)
+  	return -1;
+  read(fd, buf, 4095);
+  buf[4095] = '\0';
+  close(fd);
+  data = stack = 0;
+  vm = strstr(buf, "VmData:");
+  if (vm) {
+  	sscanf(vm, "%*s %d", &data);
+  }
+  vm = strstr(buf, "VmStk:");
+  if (vm) {
+  	sscanf(vm, "%*s %d", &stack);
+  }
+  return data + stack;
+}
+*/
+
+func getPidMem(pid string) uint64 {
+	file, err := os.Open(filepath.Join("/proc/", pid, "status"))
+
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+	var data, stack uint64
+
+	for scanner.Scan() {
+		switch arr := strings.Fields(scanner.Text()); arr[0] {
+		case "VmData:":
+			data, _ = strconv.ParseUint(arr[1], 10, 64)
+		case "VmStk:":
+			stack, _ = strconv.ParseUint(arr[1], 10, 64)
+
+		}
+
+	}
+	return data + stack
 }
