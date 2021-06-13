@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"errors"
 	"log"
 	"os"
 	"path/filepath"
@@ -13,6 +14,11 @@ import (
 type Cpu struct {
 	idleTime uint64
 	totTime  uint64
+}
+
+type PidStat struct {
+	cpu    float64
+	uptime float64
 }
 
 func GetProcs() int {
@@ -98,10 +104,6 @@ func calulateCpu(last, current Cpu) float64 {
 }
 
 /*
-/proc/uptime
-
-  #1 uptime of the system (seconds)
-    /proc/[PID]/stat
 
  $cat /proc/225/stat
  225 (scsi_tmf_4) I 2 0 0 0 -1 69238880 0 0 0 0 0 0 0 0 0 -20 1 0 119 0 0 18446744073709551615 0 0 0 0 0 0 0 2147483647 0 0 0 0 17 1 0 0 0 0 0 0 0 0 0 0 0 0 0
@@ -132,14 +134,19 @@ Calculation
 	Finally we calculate the CPU usage percentage:
 	cpu_usage = 100 * ((total_time / Hertz) / seconds)
 */
-func GetPidCpu(pid string) float64 {
 
-	file, err := os.Open(filepath.Join("/proc/", pid, "stat"))
+func GetPidCpuAndUptime(pid string) (PidStat, error) {
+	fileName := filepath.Join("/proc", pid, "stat")
+	if _, err := os.Stat(fileName); os.IsNotExist(err) {
+		// sometimes the process gets terminated while scripts are running
+		// in those cases the folders get removed
+		// in such cases return error
+		return PidStat{cpu: 0.0, uptime: 0.0}, errors.New("process got terminated")
+	}
 
+	file, err := os.Open(fileName)
 	if err != nil {
-
 		log.Fatal(err)
-
 	}
 
 	defer file.Close()
@@ -156,8 +163,7 @@ func GetPidCpu(pid string) float64 {
 	totalTime := uTime + sTime + cuTime + csTime
 	hz := GetHz()
 	upTime := GetUptime()
-	seconds := upTime - float64(startTime/uint64(hz))
-	cpu := 100.0 * float64((totalTime / uint64(hz))) / seconds
-	return cpu
-
+	uptime := upTime - float64(startTime/uint64(hz))
+	cpu := 100.0 * float64((totalTime / uint64(hz))) / uptime
+	return PidStat{cpu: cpu, uptime: uptime}, nil
 }

@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"errors"
 	"log"
 	"os"
 	"path/filepath"
@@ -124,9 +125,16 @@ int get_memory_usage(pid_t pid) {
 }
 */
 
-func getPidMem(pid string) uint64 {
-	file, err := os.Open(filepath.Join("/proc/", pid, "status"))
+func GetPidMem(pid string) (uint64, error) {
+	fileName := filepath.Join("/proc", pid, "status")
+	if _, err := os.Stat(fileName); os.IsNotExist(err) {
+		// sometimes the process gets terminated while scripts are running
+		// in those cases the folders get removed
+		// in such cases return error
+		return 0, errors.New("process got terminated")
+	}
 
+	file, err := os.Open(fileName)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -134,7 +142,6 @@ func getPidMem(pid string) uint64 {
 
 	scanner := bufio.NewScanner(file)
 	var data, stack uint64
-
 	for scanner.Scan() {
 		switch arr := strings.Fields(scanner.Text()); arr[0] {
 		case "VmData:":
@@ -145,5 +152,5 @@ func getPidMem(pid string) uint64 {
 		}
 
 	}
-	return data + stack
+	return data + stack, nil
 }

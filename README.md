@@ -1,3 +1,7 @@
+the article for basic introduction here:
+https://umangshrestha09.medium.com/create-your-own-system-monitoring-tool-in-linux-b860e480b151</br>
+
+
 # package main
 
 type Bytes struct {
@@ -25,9 +29,11 @@ func GetInterfaceNames() []string; <br />
 func GetUptime() float64; <br />
 func GetBytes(interfaceName string) Bytes; <br />
 func GetMem() MemKB; <br />
-func GetPidCpu(pid string) float64 </br>
-func GetPidofProcess() map[string][]string </br>
-func GetPidMem(pid string) uint64 </br>
-func GetPidCpu(pid string) float64 </br>
+func GetListOfPid() []string; <br />
+func GetPidCpuAndUptime(pid string) (PidStat, error) </br>
+func GetPidMem(pid string) uint64; </br>
+func GetPidCommandLine(pid string) (string, error); </br>
+func GetPidName(pid string) (string, error); </br>
+
 The output csv of example.go:
 //epoch, cpu, mUsed, sUsed, cache, uptimeInMin
